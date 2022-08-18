@@ -1,0 +1,120 @@
+body {
+    background-color: #dcdcdc;
+    padding: 0;
+    margin: 0;
+    font-family: 'Rubik Marker Hatch', cursive;
+}
+
+.name-game {
+    width: 100%;
+    height: 100px;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.name-game__titel {    
+    font-size: 48px;
+    color: #20B2AA;
+    text-align: center;
+}
+
+.field-game {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    height: auto;
+    justify-content: center;
+    margin-right: 200px;
+    margin-top: 100px;
+}
+
+.field-game__ships {
+    width: 200px;
+    font-size: 36px;
+    color: #20B2AA;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ships {
+    height: 25px;
+    border: 2px solid #20B2AA;
+    margin-bottom: 6px;
+}
+
+.ships__4 {
+    margin-top: 42px;
+    width: 130px;   
+}
+
+.ships__4:hover {
+    background-color: #aaaaaa;
+}
+
+.ships__3 {
+    width: 95px;
+}
+
+.ships__3:hover {
+    background-color: #aaaaaa;
+}
+
+.ships__2 {
+    width: 60px;
+}
+
+.ships__2:hover {
+    background-color: #aaaaaa;
+}
+
+.ships__1 {
+    width: 25px;
+}
+
+.ships__1:hover {
+    background-color: #aaaaaa;
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+}
+
+.game__field {
+    display: flex;
+    flex-direction: row;
+}
+
+.game__sea {
+    width: 500px;
+    font-size: 36px;
+    color: #20B2AA;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game__sea td {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    border: 1px solid #20B2AA;
+    background-color: #e6e6e6;
+}
+
+.game__status {
+        font-size: 36px;
+        color: #20B2AA;
+        text-align: center;
+        margin-top: 50px;
+}
+
+.rules__text {
+    font-size: 24px;
+    color: #20B2AA;
+    text-align: center;
+    margin-top: 100px;
+}
