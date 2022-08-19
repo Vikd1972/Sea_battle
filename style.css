@@ -41,7 +41,7 @@ body {
 .ships {
     height: 25px;
     border: 2px solid #20B2AA;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 }
 
 .ships__4 {
@@ -101,8 +101,30 @@ body {
     width: 30px;
     height: 30px;
     font-size: 16px;
+    /*border: 1px solid #20B2AA;*/
+}
+
+.ruler {
+    color: #008080;
+    border-color: #aaaaaa;
     border: 1px solid #20B2AA;
-    background-color: #e6e6e6;
+}
+
+.cell {
+    border: 1px solid #20B2AA;
+}
+
+.zeroCell {
+    border: none;
+    background-color: #dcdcdc;
+}
+
+.markOn {
+    background-color: #ff0000;
+}
+
+.markOff {
+    background-color: #444444;
 }
 
 .game__status {
