@@ -36,45 +36,46 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /*margin-top: 42px;*/
 }
 
-.ships {
-    height: 25px;
+.shipMoving {
+    position: absolute;
+    /*z-index: 1000;*/
+    background-color: #999999;
+}
+
+.cellShip {
+    background-color: #f08080;
+}
+
+.ships {    
     border: 2px solid #20B2AA;
     margin-bottom: 7px;
 }
 
-.ships__4 {
-    margin-top: 42px;
-    width: 130px;   
+.ships:hover {
+    background-color: #aaaaaa;
 }
 
-.ships__4:hover {
-    background-color: #aaaaaa;
+.ships__4 {    
+    width: 135px;   
+    height: 25px;
 }
 
 .ships__3 {
     width: 95px;
-}
-
-.ships__3:hover {
-    background-color: #aaaaaa;
+    height: 25px;
 }
 
 .ships__2 {
     width: 60px;
-}
-
-.ships__2:hover {
-    background-color: #aaaaaa;
+    height: 25px;
 }
 
 .ships__1 {
     width: 25px;
-}
-
-.ships__1:hover {
-    background-color: #aaaaaa;
+    height: 25px;
 }
 
 .game {

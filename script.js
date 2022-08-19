@@ -54,20 +54,20 @@ function movingCursor(name) {
         target.style.background = '';
     };
 };
-movingCursor('#your');
+//movingCursor('#your');
 movingCursor('#opponent');
 
-function cellDeinition(name) {
+function cellDeinition(name) {    
     document.querySelector(name).onmouseover = (event) => {
         let cell = event.target;
         if (cell.tagName.toLowerCase() != 'td') return;
         let i = cell.parentNode.rowIndex;
         let j = cell.cellIndex;
-        let res = [i, j]; 
-        console.log(name + ': ' + res);
+        let res = [name, i, j];
+        //console.log(res);
         return res;
-    }
-}
+    };
+};
 
 cellDeinition('#your');
 cellDeinition('#opponent');
@@ -85,3 +85,78 @@ function shot() {
 };
 
 shot();
+
+function shipMove () {
+    let ship = document.querySelector('.ships__4')
+    let currentDroppable = null;
+    ship.onmousedown = function (event) {
+        ship.classList.add('shipMoving')
+        document.body.append(ship);
+
+        moveAt(event.pageX, event.pageY);
+
+        function moveAt(pageX, pageY) {
+            ship.style.left = pageX - 17 + 'px';
+            ship.style.top = pageY - 17 + 'px';
+        };
+
+        function onMouseMove(event) {
+            moveAt(event.pageX, event.pageY);
+
+            ship.hidden = true;
+            let elemCell = document.elementFromPoint(event.clientX, event.clientY);  
+            let x = elemCell.parentNode.rowIndex;
+            let y = elemCell.cellIndex;
+            ship.hidden = false;
+
+            if (!elemCell) return;
+
+            //arragementShipOn(x, y);
+
+
+            let droppableBelow = elemCell.closest('.cell');
+            if (currentDroppable != droppableBelow) {
+                let table = document.querySelector('#your table'); 
+                if (currentDroppable) {
+                    for (let i = 0; i < 4; i++) {
+                        let elemShip = table.rows[x].cells[y+i];
+                        elemShip.classList.remove('cellShip');
+                    };
+                    arragementShipOff(x, y);
+                };
+                currentDroppable = droppableBelow;
+                if (currentDroppable) {
+                    for (let i = 0; i < 4; i++) {
+                        let elemShip = table.rows[x].cells[y+i];
+                        elemShip.classList.add('cellShip');
+                    };
+                    arragementShipOn(x, y);
+                };
+            };        
+
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        ship.onmouseup = function () {
+            document.removeEventListener('mousemove', onMouseMove);
+            ship.onmouseup = null;
+        };
+    };
+    ship.ondragstart = function () {
+        return false;
+    };
+};
+
+shipMove();
+
+var arrYour = Array(10).fill(0);
+for (let i = 0; i < 10; i++) arrYour[i] = Array(10).fill(0);
+
+function arragementShipOn(x, y) {
+    arrYour[x-1][y-1] = 1;
+}
+function arragementShipOff(x, y) {
+    arrYour[x-1][y-1] = 0;
+}
+
