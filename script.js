@@ -1,4 +1,12 @@
-function addTable(name) {
+//initiating game arrays
+var arrYour = Array(10).fill(0);
+for (let i = 0; i < 10; i++) arrYour[i] = Array(10).fill(0);
+var arrOpp = Array(10).fill(0);
+for (let i = 0; i < 10; i++) arrOpp[i] = Array(10).fill(0);
+
+var hor = true; //horizontal arrangement ships
+
+function addTable(name) { //creating a playing field
     var table = document.createElement("table");
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
@@ -14,7 +22,7 @@ function addTable(name) {
     tableFill('#' + name);
 };
 
-function tableFill(name) {  
+function tableFill(name) { //filling the playing field
     let nameFull = name + ' table';
     let table = document.querySelector(nameFull);  
     
@@ -41,56 +49,73 @@ function tableFill(name) {
 addTable('your');
 addTable('opponent');
 
-function movingCursor(name) {
-    let nameFull = name + ' table';
-    let table = document.querySelector(nameFull);
-
-    table.onmouseover = function(event) {
+function moveCursor(x, y) { //tracking cursor movement across the field
+    let table = document.querySelector('#opponent table');
+    //for (let i = 1; i < 11; i++) {
+    //    for (let j = 1; j < 11; j++) {
+    //        if (arrOpp[i - 1][j - 1] == 9) arrOpp[i - 1][j - 1] = 0;       
+    //    };        
+    //};   
+    if (x > 1) arrOpp[x - 1][y - 1] = 9;
+   
+    table.onmouseover = function (event) {
         let target = event.target;
-        if ((target.className != 'ruler') && (target.className != 'zeroCell') && (target.tagName.toLowerCase() == 'td')) target.style.background = 'pink';
+        if ((target.className != 'ruler') && (target.className != 'zeroCell') && (target.tagName.toLowerCase() == 'td')) target.classList.add('moveCursor');
     };
-    table.onmouseout = function(event) {
+    table.onmouseout = function (event) {
         let target = event.target;
+        target.classList.remove('moveCursor')
         target.style.background = '';
     };
 };
-//movingCursor('#your');
-movingCursor('#opponent');
 
-function cellDeinition(name) {    
-    document.querySelector(name).onmouseover = (event) => {
+function cellDeinition() { //getting the coordinates of a single cell
+    document.querySelector('#opponent').onmouseover = (event) => {
         let cell = event.target;
         if (cell.tagName.toLowerCase() != 'td') return;
         let i = cell.parentNode.rowIndex;
         let j = cell.cellIndex;
-        let res = [name, i, j];
+        moveCursor(i, j)
+        //let res = [i, j];
         //console.log(res);
-        return res;
+        //return res;
     };
 };
+cellDeinition();
 
-cellDeinition('#your');
-cellDeinition('#opponent');
-
-function shot() {    
-    document.querySelector('#opponent').onclick = (event) => {
+function shot() { //shot  
+    document.querySelector('#opponent table').onmousedown = (event) => {
         let cell = event.target;
         if (cell.tagName.toLowerCase() != 'td') return;
         let i = cell.parentNode.rowIndex;
         let j = cell.cellIndex;    
         let table = document.querySelectorAll('table')[1];
         let elem = table.rows[i].cells[j];
-        if ((elem.className != 'ruler') && (elem.className != 'zeroCell')) elem.classList.add('markOn');
+        arrOpp[i - 1][j - 1] = 1;
+        console.log(i, j);
+        if ((elem.className != 'ruler') && (elem.className != 'zeroCell')) elem.classList.add('shot');
     };
 };
-
 shot();
 
-function shipMove () {
-    let ship = document.querySelector('.ships__4')
-    let currentDroppable = null;
-    ship.onmousedown = function (event) {
-        ship.classList.add('shipMoving')
+function shipMove() { //moving ships
+    let x, xX, y, yY, shipLength;
+    let currentCell = null;
+    document.addEventListener('mousedown', function(event) { 
+        event.preventDefault()
+        let ship = event.target.closest('.ships')
+        if (!ship) return;
+        ship.ondragstart = function () {
+            return false;
+        };
+        if (ship.className.includes(4)) shipLength = 4;
+        if (ship.className.includes(3)) shipLength = 3;
+        if (ship.className.includes(2)) shipLength = 2;
+        if (ship.className.includes(1)) shipLength = 1;
+
+        console.log(shipLength)
+
+        ship.classList.add('movingShip')
         document.body.append(ship);
 
         moveAt(event.pageX, event.pageY);
@@ -100,38 +125,56 @@ function shipMove () {
             ship.style.top = pageY - 17 + 'px';
         };
 
+        let table = document.querySelector('#your table');
+        
+        document.addEventListener("keydown", function (event) {
+            if (event.code == 'Space')  rotateShip(ship, table, x, y, shipLength);
+        });
+
         function onMouseMove(event) {
             moveAt(event.pageX, event.pageY);
 
             ship.hidden = true;
             let elemCell = document.elementFromPoint(event.clientX, event.clientY);  
-            let x = elemCell.parentNode.rowIndex;
-            let y = elemCell.cellIndex;
+            x = elemCell.parentNode.rowIndex;
+            y = elemCell.cellIndex;          
             ship.hidden = false;
 
-            if (!elemCell) return;
-
-            //arragementShipOn(x, y);
-
-
-            let droppableBelow = elemCell.closest('.cell');
-            if (currentDroppable != droppableBelow) {
+            if (!elemCell) return;           
+            
+            let necessaryCell = elemCell.closest('.cell');
+            if (currentCell != necessaryCell) {
                 let table = document.querySelector('#your table'); 
-                if (currentDroppable) {
-                    for (let i = 0; i < 4; i++) {
-                        let elemShip = table.rows[x].cells[y+i];
+                if (currentCell) {
+                    for (let i = 0; i < shipLength; i++) {
+                        if (hor) {
+                            if (yY > (11 - shipLength)) yY = (11 - shipLength);
+                            elemShip = table.rows[xX].cells[yY+i];
+                        } else {
+                            if (xX > (11 - shipLength)) xX = (11 - shipLength);
+                            elemShip = table.rows[xX+i].cells[yY];
+                        };   
                         elemShip.classList.remove('cellShip');
-                    };
-                    arragementShipOff(x, y);
+                    };                    
+                    arragementShipOff(xX, yY, shipLength);
                 };
-                currentDroppable = droppableBelow;
-                if (currentDroppable) {
-                    for (let i = 0; i < 4; i++) {
-                        let elemShip = table.rows[x].cells[y+i];
+                currentCell = necessaryCell;
+                if (currentCell) {
+                    for (let i = 0; i < shipLength; i++) {
+                        let elemShip
+                        if (hor) {
+                            if (y > (11 - shipLength)) y = (11 - shipLength);
+                            elemShip = table.rows[x].cells[y+i];
+                        } else {
+                            if (x > (11 - shipLength)) x = (11 - shipLength);
+                            elemShip = table.rows[x+i].cells[y];
+                        };                        
                         elemShip.classList.add('cellShip');
                     };
-                    arragementShipOn(x, y);
+                    arragementShipOn(x, y, shipLength);
                 };
+                xX = x;
+                yY = y;
             };        
 
         };
@@ -140,23 +183,78 @@ function shipMove () {
 
         ship.onmouseup = function () {
             document.removeEventListener('mousemove', onMouseMove);
+            ship.hidden = true;
+            if (hor) {
+                if (y > (11 - shipLength)) y = (11 - shipLength);
+            } else {
+                if (x > (11 - shipLength)) x = (11 - shipLength);
+            };   
+            fixingShip(x, y, shipLength);
             ship.onmouseup = null;
+            hor = true;
         };
-    };
-    ship.ondragstart = function () {
-        return false;
+         
+    });
+   
+};
+shipMove();
+
+function arragementShipOn(x, y, shipLength) { //drawing the ship's movement in the array
+    for (let i = 0; i < shipLength; i++) {
+        if (hor) {
+            arrYour[x - 1][y + i - 1] = 1;  
+        } else {
+            arrYour[x + i - 1][y - 1] = 1;
+        };         
     };
 };
 
-shipMove();
+function arragementShipOff(x, y, shipLength) { //erasing the trace from moving the ship
+    for (let i = 0; i < shipLength; i++) {
+        if (hor) {
+            arrYour[x - 1][y + i - 1] = 0;  
+        } else {
+            arrYour[x + i - 1][y - 1] = 0;
+        };   
+    }; 
+};
 
-var arrYour = Array(10).fill(0);
-for (let i = 0; i < 10; i++) arrYour[i] = Array(10).fill(0);
+function fixingShip(x, y, shipLength) { //drawing of installed ships
+    let table = document.querySelector('#your table');  
+        for (let i = 0; i < shipLength; i++) {
+        if (hor) {
+            arrYour[x - 1][y + i - 1] = 2;  
+        } else {
+            arrYour[x + i - 1][y - 1] = 2;
+        };         
+    };
+    for (let i = 1; i < 11; i++) {
+        for (let j = 1; j < 11; j++) {
+            if (arrYour[i-1][j-1] == 2) {
+                let elemShip = table.rows[i].cells[j];
+                elemShip.classList.add('elemShip');
+            };
+        };
+    };
+};
 
-function arragementShipOn(x, y) {
-    arrYour[x-1][y-1] = 1;
-}
-function arragementShipOff(x, y) {
-    arrYour[x-1][y-1] = 0;
-}
+function rotateShip(ship, table, x, y, shipLength) { //ship rotation
+    let name = shipLength == 4 ? 'ships__4-ver' : shipLength == 3 ? 'ships__3-ver' : shipLength == 2 ? 'ships__2-ver' : 'ships__1'; 
+    if (hor) {
+        ship.classList.add(name);
+        hor = false;
+    } else {
+        ship.classList.remove(name);
+        hor = true;
+    };
 
+    for (let i = 1; i < 11; i++) {
+        for (let j = 1; j < 11; j++) {
+            if (arrYour[i-1][j-1] == 9) arrYour[i-1][j-1] = 0
+            let elemShip = table.rows[i].cells[j];
+            elemShip.classList.remove('cellShip');                             
+        };
+    };  
+    
+};
+    
