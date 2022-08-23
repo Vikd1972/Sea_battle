@@ -38,21 +38,21 @@ body {
     align-items: center;
 }
 
-.movingShip {
+.moving-ship {
     position: absolute;
     background-color: #20B2AA;;
 }
 
-.cellShip {
+.cell-ship {
     background-color: #f08080;
 }
 
-.elemShip {
+.elem-ship {
     background-color: #2e8b57;
 }
 
 .ships {    
-    /*display: flex;*/
+    background-color: #a4e2df
 }
 
 .ships:hover {
@@ -111,6 +111,11 @@ body {
     margin-bottom: 5px;
 }
 
+.opponent-ship {
+    background-color: darkolivegreen;
+
+}
+
 .game {
     display: flex;
     flex-direction: column;
@@ -147,7 +152,7 @@ body {
     border: 1px solid #20B2AA;
 }
 
-.zeroCell {
+.zero-cell {
     border: none;
     background-color: #dcdcdc;
 }
@@ -162,17 +167,17 @@ body {
     transition: background-color 2s;
 }
 
-.moveCursor {
+.move-cursor {
     background-color: #f08080;
 }
 
 .game__status {
-        font-size: 36px;
-        color: #20B2AA;
-        text-align: center;
-        margin-top: 50px;
-        display: flex;
-        flex-direction: column;
+    font-size: 36px;
+    color: #20B2AA;
+    text-align: center;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
 }
 
 .reload {

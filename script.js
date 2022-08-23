@@ -5,6 +5,7 @@ var arrOpp = Array(10).fill(0);
 for (let i = 0; i < 10; i++) arrOpp[i] = Array(10).fill(0);
 
 var hor = true; //horizontal arrangement ships
+var randomCoor = [0,0] // random coordinates
 
 function addTable(name) { //creating a playing field
     var table = document.createElement("table");
@@ -27,7 +28,7 @@ function tableFill(name) { //filling the playing field
     let table = document.querySelector(nameFull);  
     
     let elemZero = table.rows[0].cells[0];
-    elemZero.classList.add('zeroCell');
+    elemZero.classList.add('zero-cell');
 
     for (let i = 1; i < 11; i++) {
         let elemR = table.rows[0].cells[i];
@@ -56,15 +57,15 @@ function moveCursor(x, y) { //tracking cursor movement across the field
     //        if (arrOpp[i - 1][j - 1] == 9) arrOpp[i - 1][j - 1] = 0;       
     //    };        
     //};   
-    if (x > 1) arrOpp[x - 1][y - 1] = 9;
+    //if (x > 1) arrOpp[x - 1][y - 1] = 9;
    
     table.onmouseover = function (event) {
         let target = event.target;
-        if ((target.className != 'ruler') && (target.className != 'zeroCell') && (target.tagName.toLowerCase() == 'td')) target.classList.add('moveCursor');
+        if ((target.className != 'ruler') && (target.className != 'zero-cell') && (target.tagName.toLowerCase() == 'td')) target.classList.add('move-cursor');
     };
     table.onmouseout = function (event) {
         let target = event.target;
-        target.classList.remove('moveCursor')
+        target.classList.remove('move-cursor')
         target.style.background = '';
     };
 };
@@ -93,7 +94,7 @@ function shot() { //shot
         let elem = table.rows[i].cells[j];
         arrOpp[i - 1][j - 1] = 1;
         console.log(i, j);
-        if ((elem.className != 'ruler') && (elem.className != 'zeroCell')) elem.classList.add('shot');
+        if ((elem.className != 'ruler') && (elem.className != 'zero-cell')) elem.classList.add('shot');
     };
 };
 shot();
@@ -102,11 +103,7 @@ function shipMove() { //moving ships
     let x, xX, y, yY, shipLength;
     let currentCell = null;
     document.addEventListener('mousedown', function(event) { 
-        //event.preventDefault()
-
-
-
-
+        event.preventDefault();
         let ship = event.target.closest('.ships')
         if (!ship) return;
         ship.ondragstart = function () {
@@ -117,9 +114,9 @@ function shipMove() { //moving ships
         if (ship.className.includes(2)) shipLength = 2;
         if (ship.className.includes(1)) shipLength = 1;
 
-        console.log(shipLength)
+        //console.log(shipLength)
 
-        ship.classList.add('movingShip')
+        ship.classList.add('moving-ship')
         document.body.append(ship);
 
         moveAt(event.pageX, event.pageY);
@@ -132,7 +129,7 @@ function shipMove() { //moving ships
         let table = document.querySelector('#your table');
         
         document.addEventListener("keydown", function (event) {
-            if (event.code == 'Space')  rotateShip(ship, table, x, y, shipLength);
+            if (event.code == 'Space')  rotateShip(ship, table, shipLength);
         });
 
         function onMouseMove(event) {
@@ -158,7 +155,7 @@ function shipMove() { //moving ships
                             if (xX > (11 - shipLength)) xX = (11 - shipLength);
                             elemShip = table.rows[xX+i].cells[yY];
                         };   
-                        elemShip.classList.remove('cellShip');
+                        elemShip.classList.remove('cell-ship');
                     };                    
                     arragementShipOff(xX, yY, shipLength);
                 };
@@ -173,7 +170,7 @@ function shipMove() { //moving ships
                             if (x > (11 - shipLength)) x = (11 - shipLength);
                             elemShip = table.rows[x+i].cells[y];
                         };                        
-                        elemShip.classList.add('cellShip');
+                        elemShip.classList.add('cell-ship');
                     };
                     arragementShipOn(x, y, shipLength);
                 };
@@ -195,6 +192,7 @@ function shipMove() { //moving ships
             if (fixingShip(x, y, shipLength)) ship.hidden = true;
             ship.onmouseup = null;
             hor = true;
+            
         };
     });
    
@@ -223,7 +221,7 @@ function arragementShipOff(x, y, shipLength) { //erasing the trace from moving t
 
 function fixingShip(x, y, shipLength) { //drawing of installed ships
     let table = document.querySelector('#your table');  
-    console.log(arrYour)
+    //console.log(arrYour)
     if ((y < 1) || (x < 1) )return false;
     for (let i = 0; i < shipLength; i++) {
         if (hor) {
@@ -260,14 +258,14 @@ function fixingShip(x, y, shipLength) { //drawing of installed ships
         for (let j = 1; j < 11; j++) {
             if (arrYour[i-1][j-1] == 2) {
                 let elemShip = table.rows[i].cells[j];
-                elemShip.classList.add('elemShip');
+                elemShip.classList.add('elem-ship');
             };
         };
     };
     return true;
 };
 
-function rotateShip(ship, table, x, y, shipLength) { //ship rotation
+function rotateShip(ship, table, shipLength) { //ship rotation
     let name = shipLength == 4 ? 'ships__4-ver' : shipLength == 3 ? 'ships__3-ver' : shipLength == 2 ? 'ships__2-ver' : 'ships__1'; 
     if (hor) {
         ship.classList.add(name);
@@ -281,9 +279,92 @@ function rotateShip(ship, table, x, y, shipLength) { //ship rotation
         for (let j = 1; j < 11; j++) {
             if (arrYour[i-1][j-1] == 9) arrYour[i-1][j-1] = 0
             let elemShip = table.rows[i].cells[j];
-            elemShip.classList.remove('cellShip');                             
+            elemShip.classList.remove('cell-ship');                             
         };
     };  
     
 };
     
+function randomCoordinates() { //getting random coordinates
+    randomCoor[0] = Math.floor(Math.random() * 10);
+    randomCoor[1] = Math.floor(Math.random() * 10);
+};
+
+function opponentShip(shipLength) {//placement of opponent's ships    
+    randomCoordinates();
+    let x = randomCoor[0];
+    let y = randomCoor[1];
+    let rules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    console.log('coordinates: ' + (x + 1) + ':' + rules[y] + ', length: ' + shipLength);
+    let horOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+    let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+    if ((horOpp) && (verOpp)) {
+        console.log(horOpp + ' ' + verOpp + ' right');
+        if (y + shipLength - 1 <= 9) {
+            for (let i = 0; i < shipLength; i++) {
+                if (arrOpp[x][y + i] != 0) opponentShip(shipLength);
+            };
+            for (let i = 0; i < shipLength; i++) arrOpp[x][y + i] = 2;
+        } else opponentShip(shipLength);
+    };
+    if ((horOpp) && (!verOpp)) {
+        console.log(horOpp + ' ' + verOpp + ' left');
+        if (y - shipLength + 1 >= 0) {
+            for (let i = 0; i < shipLength; i++) {
+                if (arrOpp[x][y - i] != 0) opponentShip(shipLength);
+            };
+            for (let i = 0; i < shipLength; i++) arrOpp[x][y - i] = 2;
+        } else opponentShip(shipLength);
+    };
+    if ((!horOpp) && (verOpp)) {
+        console.log(horOpp + ' ' + verOpp + ' down');
+        if (x + shipLength - 1 <= 9) {
+            for (let i = 0; i < shipLength; i++) {
+                if (arrOpp[x + i][y] != 0) opponentShip(shipLength);
+            };
+            for (let i = 0; i < shipLength; i++) arrOpp[x + i][y] = 2;
+        } else opponentShip(shipLength);
+    };
+    if ((!horOpp) && (!verOpp)) {
+        console.log(horOpp + ' ' + verOpp + ' up');
+        if (x - shipLength + 1 >= 0) {
+            for (let i = 0; i < shipLength; i++) {
+                if (arrOpp[x - i][y] != 0) opponentShip(shipLength);
+            };
+            for (let i = 0; i < shipLength; i++) arrOpp[x - i][y] = 2;
+        } else opponentShip(shipLength);
+    };    
+
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            if (arrOpp[i][j] == 2) {
+                if ((i > 0) && (arrOpp[i - 1][j] != 2)) arrOpp[i - 1][j] = 3; 
+                if ((i < 9) && (arrOpp[i + 1][j] != 2)) arrOpp[i + 1][j] = 3;
+                if ((j > 0) && (arrOpp[i][j - 1] != 2)) arrOpp[i][j - 1] = 3;
+                if ((j < 9) && (arrOpp[i][j + 1] != 2)) arrOpp[i][j + 1] = 3;                
+                if ((i > 0) && (j > 0) && (arrOpp[i - 1][j - 1] != 2)) arrOpp[i - 1][j - 1] = 3;
+                if ((i < 9) && (j > 0) && (arrOpp[i + 1][j - 1] != 2)) arrOpp[i + 1][j - 1] = 3;
+                if ((i > 0) && (j < 9) && (arrOpp[i - 1][j + 1] != 2)) arrOpp[i - 1][j + 1] = 3;
+                if ((i < 9) && (j < 9) && (arrOpp[i + 1][j + 1] != 2)) arrOpp[i + 1][j + 1] = 3;
+            };
+        };
+    };
+
+    let table = document.querySelector('#opponent table');
+    for (let i = 1; i < 11; i++) {
+        for (let j = 1; j < 11; j++) {
+            if (arrOpp[i-1][j-1] == 2) {
+                let opponentsShip = table.rows[i].cells[j];
+                opponentsShip.classList.add('opponent-ship');
+            };
+        };
+    };
+    
+    return true;
+};
+
+var ships = [4, 3];
+for (let i = 0; i < ships.length; i++) {
+    console.log('run')
+    opponentShip(ships[i]);
+};
