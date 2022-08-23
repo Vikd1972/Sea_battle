@@ -67,47 +67,47 @@ body {
 .ships__4 {    
     border: 1px solid #2e8b57;
     margin: 2px;
-    width: 135px;
-    height: 25px;    
+    width: 140px;
+    height: 30px;    
     margin-bottom: 5px;
 }
 
 .ships__4-ver {
-    width: 25px;
-    height: 135px;
+    width: 30px;
+    height: 140px;
 }
 
 .ships__3 {
     border: 1px solid #2e8b57;
     margin: 2px;
-    width: 100px;
-    height: 25px;
+    width: 105px;
+    height: 30px;
     margin-bottom: 5px;
 }
 
 .ships__3-ver {
-    width: 25px;
-    height: 100px;
+    width: 30px;
+    height: 105px;
 }
 
 .ships__2 {
     border: 1px solid #2e8b57;
     margin: 2px;
-    width: 55px;
-    height: 25px;
+    width: 70px;
+    height: 30px;
     margin-bottom: 5px;
 }
 
 .ships__2-ver {
-    width: 25px;
-    height: 55px;
+    width: 30px;
+    height: 70px;
 }
 
 .ships__1 {
     border: 1px solid #2e8b57;
     margin: 2px;
-    width: 27px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     margin-bottom: 5px;
 }
 
@@ -171,6 +171,22 @@ body {
         color: #20B2AA;
         text-align: center;
         margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+}
+
+.reload {
+    font-family: 'Rubik Marker Hatch', cursive;
+    width: 150px;
+    height: 50px;
+    font-size: 24px;
+    color: #20B2AA;
+    background-color: #dcdcdc;
+    border-radius: 10px;
+}
+
+.reload:hover {
+    background-color: #acacac;    
 }
 
 .rules__text {

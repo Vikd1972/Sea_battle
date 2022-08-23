@@ -102,7 +102,11 @@ function shipMove() { //moving ships
     let x, xX, y, yY, shipLength;
     let currentCell = null;
     document.addEventListener('mousedown', function(event) { 
-        event.preventDefault()
+        //event.preventDefault()
+
+
+
+
         let ship = event.target.closest('.ships')
         if (!ship) return;
         ship.ondragstart = function () {
@@ -182,18 +186,16 @@ function shipMove() { //moving ships
         document.addEventListener('mousemove', onMouseMove);
 
         ship.onmouseup = function () {
-            document.removeEventListener('mousemove', onMouseMove);
-            ship.hidden = true;
+            document.removeEventListener('mousemove', onMouseMove);            
             if (hor) {
                 if (y > (11 - shipLength)) y = (11 - shipLength);
             } else {
                 if (x > (11 - shipLength)) x = (11 - shipLength);
             };   
-            fixingShip(x, y, shipLength);
+            if (fixingShip(x, y, shipLength)) ship.hidden = true;
             ship.onmouseup = null;
             hor = true;
         };
-         
     });
    
 };
@@ -202,9 +204,9 @@ shipMove();
 function arragementShipOn(x, y, shipLength) { //drawing the ship's movement in the array
     for (let i = 0; i < shipLength; i++) {
         if (hor) {
-            arrYour[x - 1][y + i - 1] = 1;  
+            if ((arrYour[x - 1][y + i - 1] != 2) && (arrYour[x - 1][y + i - 1] != 3)) arrYour[x - 1][y + i - 1] = 1;  
         } else {
-            arrYour[x + i - 1][y - 1] = 1;
+            if ((arrYour[x + i - 1][y - 1] != 2) && (arrYour[x + i - 1][y - 1] != 3)) arrYour[x + i - 1][y - 1] = 1;
         };         
     };
 };
@@ -212,22 +214,48 @@ function arragementShipOn(x, y, shipLength) { //drawing the ship's movement in t
 function arragementShipOff(x, y, shipLength) { //erasing the trace from moving the ship
     for (let i = 0; i < shipLength; i++) {
         if (hor) {
-            arrYour[x - 1][y + i - 1] = 0;  
+            if ((arrYour[x - 1][y + i - 1] != 2) && (arrYour[x - 1][y + i - 1] != 3)) arrYour[x - 1][y + i - 1] = 0;  
         } else {
-            arrYour[x + i - 1][y - 1] = 0;
-        };   
+            if ((arrYour[x + i - 1][y - 1] != 2) && (arrYour[x + i - 1][y - 1] != 3)) arrYour[x + i - 1][y - 1] = 0;
+        };  
     }; 
 };
 
 function fixingShip(x, y, shipLength) { //drawing of installed ships
     let table = document.querySelector('#your table');  
-        for (let i = 0; i < shipLength; i++) {
+    console.log(arrYour)
+    if ((y < 1) || (x < 1) )return false;
+    for (let i = 0; i < shipLength; i++) {
+        if (hor) {
+            if ((arrYour[x - 1][y + i - 1] == 2) || (arrYour[x - 1][y + i - 1] == 3)) return false;  
+        } else {
+            if ((arrYour[x + i - 1][y - 1] == 2) || (arrYour[x + i - 1][y - 1] == 3)) return false;
+        };         
+    };
+    
+    for (let i = 0; i < shipLength; i++) {
         if (hor) {
             arrYour[x - 1][y + i - 1] = 2;  
         } else {
             arrYour[x + i - 1][y - 1] = 2;
         };         
     };
+   
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            if (arrYour[i][j] == 2) {
+                if ((i > 0) && (arrYour[i - 1][j] != 2)) arrYour[i - 1][j] = 3; 
+                if ((i < 9) && (arrYour[i + 1][j] != 2)) arrYour[i + 1][j] = 3;
+                if ((j > 0) && (arrYour[i][j - 1] != 2)) arrYour[i][j - 1] = 3;
+                if ((j < 9) && (arrYour[i][j + 1] != 2)) arrYour[i][j + 1] = 3;                
+                if ((i > 0) && (j > 0) && (arrYour[i - 1][j - 1] != 2)) arrYour[i - 1][j - 1] = 3;
+                if ((i < 9) && (j > 0) && (arrYour[i + 1][j - 1] != 2)) arrYour[i + 1][j - 1] = 3;
+                if ((i > 0) && (j < 9) && (arrYour[i - 1][j + 1] != 2)) arrYour[i - 1][j + 1] = 3;
+                if ((i < 9) && (j < 9) && (arrYour[i + 1][j + 1] != 2)) arrYour[i + 1][j + 1] = 3;
+            };
+        };
+    };
+
     for (let i = 1; i < 11; i++) {
         for (let j = 1; j < 11; j++) {
             if (arrYour[i-1][j-1] == 2) {
@@ -236,6 +264,7 @@ function fixingShip(x, y, shipLength) { //drawing of installed ships
             };
         };
     };
+    return true;
 };
 
 function rotateShip(ship, table, x, y, shipLength) { //ship rotation
