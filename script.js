@@ -112,6 +112,26 @@ function shot() { //shot
 
             return sunk;
         };
+
+        function shotNot() {
+            console.log('shot not')
+            let currentShip = opponentShips[index]
+            for (let k = 1; k < currentShip.length; k++) {
+                let i = currentShip[k][0];
+                let j = currentShip[k][1];
+                console.log(i,j)
+                if (arrOpp[i][j] == 5) {
+                    if ((i > 0) && (arrOpp[i - 1][j] != 5)) arrOpp[i - 1][j] = 1;
+                    if ((i < 9) && (arrOpp[i + 1][j] != 5)) arrOpp[i + 1][j] = 1;
+                    if ((j > 0) && (arrOpp[i][j - 1] != 5)) arrOpp[i][j - 1] = 1;
+                    if ((j < 9) && (arrOpp[i][j + 1] != 5)) arrOpp[i][j + 1] = 1;
+                    if ((i > 0) && (j > 0) && (arrOpp[i - 1][j - 1] != 5)) arrOpp[i - 1][j - 1] = 1;
+                    if ((i < 9) && (j > 0) && (arrOpp[i + 1][j - 1] != 5)) arrOpp[i + 1][j - 1] = 1;
+                    if ((i > 0) && (j < 9) && (arrOpp[i - 1][j + 1] != 5)) arrOpp[i - 1][j + 1] = 1;
+                    if ((i < 9) && (j < 9) && (arrOpp[i + 1][j + 1] != 5)) arrOpp[i + 1][j + 1] = 1;
+                };
+            }
+        };
         
         let cell = event.target;
         if (cell.tagName.toLowerCase() != 'td') return;
@@ -126,9 +146,10 @@ function shot() { //shot
                 for (let j = 1; j < opponentShips[index].length; j++) {
                     let xX = opponentShips[index][j][0];
                     let yY = opponentShips[index][j][1];
-                    console.log(xX, yY);
+                    //console.log(xX, yY);
                     arrOpp[xX][yY] = 5;                    
                 }
+                shotNot(index);
             } else {
                 arrOpp[x - 1][y - 1] = 4;
             }
