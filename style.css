@@ -157,8 +157,18 @@ body {
     background-color: #dcdcdc;
 }
 
-.shot {
-    background-color: red;   
+.shot-away {
+    background-color: #e0f2f1;   
+    transition: background-color 0.5s;
+}
+
+.shot-wounded {
+    background-color: #7e57c2;
+    transition: background-color 1s;
+}
+
+.shot-sunk {
+    background-color: #b71c1c;
     transition: background-color 1s;
 }
 
@@ -168,7 +178,7 @@ body {
 }
 
 .move-cursor {
-    background-color: #f08080;
+    background-color: #fff9c4;
 }
 
 .game__status {
@@ -187,6 +197,7 @@ body {
     font-size: 24px;
     color: #20B2AA;
     background-color: #dcdcdc;
+    border: 1px solid #20B2AA;
     border-radius: 10px;
 }
 
@@ -199,4 +210,12 @@ body {
     color: #20B2AA;
     text-align: center;
     margin-top: 100px;
+}
+
+.rules__shot {
+    width: 150px;
+    height: 30px;
+    margin: 5px;
+    border: 1px solid #20B2AA;
+    border-radius: 10px;
 }
