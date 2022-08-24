@@ -609,3 +609,149 @@ for (let i = 0; i < ships.length; i++) {
     //console.log('run')
     opponentShip(ships[i]);
 };
+
+function autoPlacement(shipLength) {//placement of opponent's ships    
+    let myShipOn = true;
+    yourShips.push(shipLength);
+
+    while (myShipOn) {
+        let occupied = false;         
+        randomCoordinates();
+        let x = randomCoor[0];
+        let y = randomCoor[1];
+        let rules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        //console.log('coordinates: ' + (x + 1) + ':' + rules[y] + ', length: ' + shipLength);
+        let horOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+        let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+
+        if ((horOpp) && (verOpp)) {
+            //console.log(horOpp + ' ' + verOpp + ' right');
+            if (y + shipLength - 1 <= 9) {
+                //console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrYour[x][y + i] != 0) {
+                        //console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    myShipOn = false;   
+                    yourShips[yourShips.length - 1] = []; 
+                    yourShips[yourShips.length-1][0] = shipLength;  
+                    for (let i = 0; i < shipLength; i++) {
+                        arrYour[x][y + i] = 2;                
+                        yourShips[yourShips.length-1].push([x, (y + i), 0]);
+                    };
+                    //console.log('done');               
+                };
+                
+            };
+        };
+        if ((horOpp) && (!verOpp)) {
+            //console.log(horOpp + ' ' + verOpp + ' left');
+            if (y - shipLength + 1 >= 0) {
+                //console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrYour[x][y - i] != 0) {
+                        //console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    myShipOn = false;   
+                    yourShips[yourShips.length - 1] = []; 
+                    yourShips[yourShips.length-1][0] = shipLength;  
+                    for (let i = 0; i < shipLength; i++) {
+                        arrYour[x][y - i] = 2;         
+                        yourShips[yourShips.length-1].push([x, (y - i), 0]);
+                    };
+                    //console.log('done');
+                };
+            };
+        };
+        if ((!horOpp) && (verOpp)) {
+            //console.log(horOpp + ' ' + verOpp + ' down');
+            if (x + shipLength - 1 <= 9) {
+                //console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrYour[x + i][y] != 0) {
+                        //console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    myShipOn = false;   
+                    yourShips[yourShips.length - 1] = []; 
+                    yourShips[yourShips.length-1][0] = shipLength;  
+                    for (let i = 0; i < shipLength; i++) {
+                        arrYour[x + i][y] = 2;
+                        yourShips[yourShips.length-1].push([(x + i), y, 0]);
+                    };
+                    //console.log('done'); 
+                };
+            };
+        };
+        if ((!horOpp) && (!verOpp)) {
+            //console.log(horOpp + ' ' + verOpp + ' up');
+            if (x - shipLength + 1 >= 0) {
+                //console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrYour[x - i][y] != 0) {
+                        occupied = true;
+                        //console.log('occupied');
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    myShipOn = false;   
+                    yourShips[yourShips.length - 1] = []; 
+                    yourShips[yourShips.length-1][0] = shipLength;  
+                    for (let i = 0; i < shipLength; i++) {
+                        arrYour[x - i][y] = 2;
+                        yourShips[yourShips.length-1].push([(x - i), y, 0]);
+                    };
+                    //console.log('done');
+                };
+            };
+        };
+    };  
+
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            if (arrYour[i][j] == 2) {
+                if ((i > 0) && (arrYour[i - 1][j] != 2)) arrYour[i - 1][j] = 3; 
+                if ((i < 9) && (arrYour[i + 1][j] != 2)) arrYour[i + 1][j] = 3;
+                if ((j > 0) && (arrYour[i][j - 1] != 2)) arrYour[i][j - 1] = 3;
+                if ((j < 9) && (arrYour[i][j + 1] != 2)) arrYour[i][j + 1] = 3;                
+                if ((i > 0) && (j > 0) && (arrYour[i - 1][j - 1] != 2)) arrYour[i - 1][j - 1] = 3;
+                if ((i < 9) && (j > 0) && (arrYour[i + 1][j - 1] != 2)) arrYour[i + 1][j - 1] = 3;
+                if ((i > 0) && (j < 9) && (arrYour[i - 1][j + 1] != 2)) arrYour[i - 1][j + 1] = 3;
+                if ((i < 9) && (j < 9) && (arrYour[i + 1][j + 1] != 2)) arrYour[i + 1][j + 1] = 3;
+            };
+        };
+    };
+
+    let table = document.querySelector('#your table'); 
+    for (let i = 1; i < 11; i++) { 
+        for (let j = 1; j < 11; j++) {
+            if (arrYour[i-1][j-1] == 2) {
+                let myShip = table.rows[i].cells[j];
+                myShip.classList.add('elem-ship');
+            };
+        };
+    };
+    
+    return true;
+};
+
+function startAuto() {
+    for (let i = 0; i < 10; i++) {
+        let ship = document.querySelectorAll('.ships')[i];
+        let shipLength = ship.className[ship.className.length - 1];
+        if (!isNaN(shipLength/shipLength)) autoPlacement(shipLength);
+        ship.hidden = true
+    };
+}
