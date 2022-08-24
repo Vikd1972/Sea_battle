@@ -291,49 +291,94 @@ function randomCoordinates() { //getting random coordinates
 };
 
 function opponentShip(shipLength) {//placement of opponent's ships    
-    randomCoordinates();
-    let x = randomCoor[0];
-    let y = randomCoor[1];
-    let rules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    console.log('coordinates: ' + (x + 1) + ':' + rules[y] + ', length: ' + shipLength);
-    let horOpp = (Math.floor(Math.random() * 10) % 2 == 0);
-    let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
-    if ((horOpp) && (verOpp)) {
-        console.log(horOpp + ' ' + verOpp + ' right');
-        if (y + shipLength - 1 <= 9) {
-            for (let i = 0; i < shipLength; i++) {
-                if (arrOpp[x][y + i] != 0) opponentShip(shipLength);
+
+    let opponentShipOn = true;
+    
+
+    while (opponentShipOn) {
+        let occupied = false;
+        randomCoordinates();
+        let x = randomCoor[0];
+        let y = randomCoor[1];
+        let rules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        console.log('coordinates: ' + (x + 1) + ':' + rules[y] + ', length: ' + shipLength);
+        let horOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+        let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
+
+        if ((horOpp) && (verOpp)) {
+            console.log(horOpp + ' ' + verOpp + ' right');
+            if (y + shipLength - 1 <= 9) {
+                console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrOpp[x][y + i] != 0) {
+                        console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    for (let i = 0; i < shipLength; i++) arrOpp[x][y + i] = 2;
+                    console.log('done');
+                    opponentShipOn = false;
+                };
+                
             };
-            for (let i = 0; i < shipLength; i++) arrOpp[x][y + i] = 2;
-        } else opponentShip(shipLength);
+        };
+        if ((horOpp) && (!verOpp)) {
+            console.log(horOpp + ' ' + verOpp + ' left');
+            if (y - shipLength + 1 >= 0) {
+                console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrOpp[x][y - i] != 0) {
+                        console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    for (let i = 0; i < shipLength; i++) arrOpp[x][y - i] = 2;
+                    console.log('done');
+                    opponentShipOn = false;
+                };
+            };
+        };
+        if ((!horOpp) && (verOpp)) {
+            console.log(horOpp + ' ' + verOpp + ' down');
+            if (x + shipLength - 1 <= 9) {
+                console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrOpp[x + i][y] != 0) {
+                        console.log('occupied');
+                        occupied = true;
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    for (let i = 0; i < shipLength; i++) arrOpp[x + i][y] = 2;
+                    console.log('done');
+                    opponentShipOn = false;
+                };
+            };
+        };
+        if ((!horOpp) && (!verOpp)) {
+            console.log(horOpp + ' ' + verOpp + ' up');
+            if (x - shipLength + 1 >= 0) {
+                console.log('fit');
+                for (let i = 0; i < shipLength; i++) {
+                    if (arrOpp[x - i][y] != 0) {
+                        occupied = true;
+                        console.log('occupied');
+                        break;
+                    };
+                };
+                if (!occupied) {
+                    for (let i = 0; i < shipLength; i++) arrOpp[x - i][y] = 2;
+                    console.log('done');
+                    opponentShipOn = false;
+                };
+            };
+        };
     };
-    if ((horOpp) && (!verOpp)) {
-        console.log(horOpp + ' ' + verOpp + ' left');
-        if (y - shipLength + 1 >= 0) {
-            for (let i = 0; i < shipLength; i++) {
-                if (arrOpp[x][y - i] != 0) opponentShip(shipLength);
-            };
-            for (let i = 0; i < shipLength; i++) arrOpp[x][y - i] = 2;
-        } else opponentShip(shipLength);
-    };
-    if ((!horOpp) && (verOpp)) {
-        console.log(horOpp + ' ' + verOpp + ' down');
-        if (x + shipLength - 1 <= 9) {
-            for (let i = 0; i < shipLength; i++) {
-                if (arrOpp[x + i][y] != 0) opponentShip(shipLength);
-            };
-            for (let i = 0; i < shipLength; i++) arrOpp[x + i][y] = 2;
-        } else opponentShip(shipLength);
-    };
-    if ((!horOpp) && (!verOpp)) {
-        console.log(horOpp + ' ' + verOpp + ' up');
-        if (x - shipLength + 1 >= 0) {
-            for (let i = 0; i < shipLength; i++) {
-                if (arrOpp[x - i][y] != 0) opponentShip(shipLength);
-            };
-            for (let i = 0; i < shipLength; i++) arrOpp[x - i][y] = 2;
-        } else opponentShip(shipLength);
-    };    
 
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
@@ -363,7 +408,7 @@ function opponentShip(shipLength) {//placement of opponent's ships
     return true;
 };
 
-var ships = [4, 3];
+var ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 for (let i = 0; i < ships.length; i++) {
     console.log('run')
     opponentShip(ships[i]);
