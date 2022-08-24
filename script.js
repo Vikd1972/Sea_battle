@@ -7,6 +7,7 @@ for (let i = 0; i < 10; i++) arrOpp[i] = Array(10).fill(0);
 var hor = true; //horizontal arrangement ships
 var randomCoor = [0, 0] // random coordinates
 var opponentShips = [];
+let yourShips = [];
 
 function addTable(name) { //creating a playing field
     var table = document.createElement("table");
@@ -85,7 +86,7 @@ function cellDeinition() { //getting the coordinates of a single cell
 };
 cellDeinition();
 
-function shot() { //shot  
+function shotYour() { //shot  
     document.querySelector('#opponent table').onmousedown = (event) => {
         let index;
         let sunk = false;
@@ -99,8 +100,7 @@ function shot() { //shot
                         break searchShip;
                     };
                 };
-            };            
-
+            };           
             for (let j = 1; j < opponentShips[index].length; j++) {                
                 if (opponentShips[index][j][2] == 1) {
                     sunk = true;
@@ -108,11 +108,9 @@ function shot() { //shot
                     sunk = false;
                     break;
                 };
-            };                
-
+            };               
             return sunk;
         };
-
         function shotNot() {
             console.log('shot not')
             let currentShip = opponentShips[index]
@@ -141,6 +139,7 @@ function shot() { //shot
         let elem = table.rows[x].cells[y];      
         if (arrOpp[x - 1][y - 1] != 2) { // away(1) wounded(4) sunk(5)
             arrOpp[x - 1][y - 1] = 1;
+            shotOpp();
         } else {
             if (isSunk(x - 1, y - 1)) {
                 for (let j = 1; j < opponentShips[index].length; j++) {
@@ -149,7 +148,7 @@ function shot() { //shot
                     //console.log(xX, yY);
                     arrOpp[xX][yY] = 5;                    
                 }
-                shotNot(index);
+                shotNot();
             } else {
                 arrOpp[x - 1][y - 1] = 4;
             }
@@ -176,7 +175,100 @@ function shot() { //shot
         };
     };
 };
-shot();
+shotYour();
+
+function shotOpp() {
+    let index;
+    function isSunkMe(x, y) {
+        console.log(x, y)
+        searchShip: for (let i = 0; i < yourShips.length; i++) { //search ship by shot
+            for (let j = 1; j < yourShips[i].length; j++) {
+                if ((yourShips[i][j][0] == x) && (yourShips[i][j][1] == y)) {
+                    console.log('My ships: ' + (i + 1))
+                    index = i;
+                    yourShips[i][j][2] = 1;
+                    break searchShip;
+                };
+            };
+        };
+        for (let j = 1; j < yourShips[index].length; j++) {
+            if (yourShips[index][j][2] == 1) {
+                sunk = true;
+            } else {
+                sunk = false;
+                break;
+            };
+        }; 
+        return sunk;
+    };
+    function shotNotMe() {
+            console.log('shot not me')
+            let currentShip = yourShips[index]
+            for (let k = 1; k < currentShip.length; k++) {
+                let i = currentShip[k][0];
+                let j = currentShip[k][1];
+                console.log(i,j)
+                if (arrYour[i][j] == 5) {
+                    if ((i > 0) && (arrYour[i - 1][j] != 5)) arrYour[i - 1][j] = 1;
+                    if ((i < 9) && (arrYour[i + 1][j] != 5)) arrYour[i + 1][j] = 1;
+                    if ((j > 0) && (arrYour[i][j - 1] != 5)) arrYour[i][j - 1] = 1;
+                    if ((j < 9) && (arrYour[i][j + 1] != 5)) arrYour[i][j + 1] = 1;
+                    if ((i > 0) && (j > 0) && (arrYour[i - 1][j - 1] != 5)) arrYour[i - 1][j - 1] = 1;
+                    if ((i < 9) && (j > 0) && (arrYour[i + 1][j - 1] != 5)) arrYour[i + 1][j - 1] = 1;
+                    if ((i > 0) && (j < 9) && (arrYour[i - 1][j + 1] != 5)) arrYour[i - 1][j + 1] = 1;
+                    if ((i < 9) && (j < 9) && (arrYour[i + 1][j + 1] != 5)) arrYour[i + 1][j + 1] = 1;
+                };
+            }
+        };
+        
+    randomCoordinates();
+    let x = randomCoor[0];
+    let y = randomCoor[1];
+    if ((arrYour[x][y] == 1) || (arrYour[x][y] == 1) || (arrYour[x][y] == 1)) shotOpp();
+    let table = document.querySelectorAll('#your table')[0];
+    let elem = table.rows[x + 1].cells[y + 1];      
+    if (arrYour[x][y] != 2) { // away(1) wounded(4) sunk(5)
+        arrYour[x][y] = 1;
+    } else {
+        if (isSunkMe(x, y)) {
+            console.log('Sunk me!!!!')
+            for (let j = 1; j < yourShips[index].length; j++) {
+                let xX = yourShips[index][j][0];
+                let yY = yourShips[index][j][1];
+                //console.log(xX, yY);
+                arrYour[xX][yY] = 5;
+            }
+            shotNotMe();
+        } else {
+            arrYour[x][y] = 4;
+        }
+    };
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            if (arrYour[i][j] == 1) {
+                elem = table.rows[i + 1].cells[j + 1];
+                elem.classList.add('shot-away');
+            };
+            if (arrYour[i][j] == 4) {
+                elem = table.rows[i + 1].cells[j + 1];
+                elem.classList.add('shot-wounded');
+            };
+            if (arrYour[i][j] == 5) {
+                elem = table.rows[i + 1].cells[j + 1];
+                elem.classList.add('shot-sunk');
+            };
+        };
+    };
+
+  /*  
+    arrYour[x][y] = 1;
+    let table = document.querySelector('#your table');
+    let elemShip = table.rows[x + 1].cells[y + 1];
+    elemShip.classList.add('shot-away');   
+    isSunkMe(x, y)*/
+
+
+}
 
 function shipMove() { //moving ships
     let x, xX, y, yY, shipLength;
@@ -298,7 +390,7 @@ function arragementShipOff(x, y, shipLength) { //erasing the trace from moving t
     }; 
 };
 
-function fixingShip(x, y, shipLength) { //drawing of installed ships
+function fixingShip(x, y, shipLength) { //drawing of installed ships    
     let table = document.querySelector('#your table');  
     //console.log(arrYour)
     if ((y < 1) || (x < 1) )return false;
@@ -309,12 +401,17 @@ function fixingShip(x, y, shipLength) { //drawing of installed ships
             if ((arrYour[x + i - 1][y - 1] == 2) || (arrYour[x + i - 1][y - 1] == 3)) return false;
         };         
     };
-    
-    for (let i = 0; i < shipLength; i++) {
+    yourShips.push(shipLength);
+    yourShips[yourShips.length - 1] = []; 
+    yourShips[yourShips.length - 1][0] = shipLength;  
+    console.log(yourShips)
+    for (let i = 0; i < shipLength; i++) {        
         if (hor) {
             arrYour[x - 1][y + i - 1] = 2;  
+            yourShips[yourShips.length-1].push([(x - 1), (y + i - 1), 0]);
         } else {
             arrYour[x + i - 1][y - 1] = 2;
+            yourShips[yourShips.length-1].push([(x + i - 1), (y - i), 0]);
         };         
     };
    
@@ -374,8 +471,7 @@ function opponentShip(shipLength) {//placement of opponent's ships
     opponentShips.push(shipLength);
 
     while (opponentShipOn) {
-        let occupied = false;             
-        let ship = [];
+        let occupied = false;         
         randomCoordinates();
         let x = randomCoor[0];
         let y = randomCoor[1];
@@ -401,7 +497,7 @@ function opponentShip(shipLength) {//placement of opponent's ships
                     opponentShips[opponentShips.length-1][0] = shipLength;  
                     for (let i = 0; i < shipLength; i++) {
                         arrOpp[x][y + i] = 2;                
-                        opponentShips[opponentShips.length-1].push([x, (y + i)]);
+                        opponentShips[opponentShips.length-1].push([x, (y + i), 0]);
                     };
                     //console.log('done');               
                 };
@@ -425,7 +521,7 @@ function opponentShip(shipLength) {//placement of opponent's ships
                     opponentShips[opponentShips.length-1][0] = shipLength;  
                     for (let i = 0; i < shipLength; i++) {
                         arrOpp[x][y - i] = 2;         
-                        opponentShips[opponentShips.length-1].push([x, (y - i)]);
+                        opponentShips[opponentShips.length-1].push([x, (y - i), 0]);
                     };
                     //console.log('done');
                 };
@@ -448,7 +544,7 @@ function opponentShip(shipLength) {//placement of opponent's ships
                     opponentShips[opponentShips.length-1][0] = shipLength;  
                     for (let i = 0; i < shipLength; i++) {
                         arrOpp[x + i][y] = 2;
-                        opponentShips[opponentShips.length-1].push([(x + i), y]);
+                        opponentShips[opponentShips.length-1].push([(x + i), y, 0]);
                     };
                     //console.log('done'); 
                 };
@@ -471,19 +567,13 @@ function opponentShip(shipLength) {//placement of opponent's ships
                     opponentShips[opponentShips.length-1][0] = shipLength;  
                     for (let i = 0; i < shipLength; i++) {
                         arrOpp[x - i][y] = 2;
-                        opponentShips[opponentShips.length-1].push([(x - i), y]);
+                        opponentShips[opponentShips.length-1].push([(x - i), y, 0]);
                     };
                     //console.log('done');
                 };
             };
         };
-    };
-
-    for (let i = 0; i < opponentShips.length; i++) { 
-        for (let j = 1; j < opponentShips[i].length; j++) {                   
-            opponentShips[i][j][2] = 0;
-        };
-    };            
+    };  
 
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
@@ -500,15 +590,16 @@ function opponentShip(shipLength) {//placement of opponent's ships
         };
     };
 
-    let table = document.querySelector('#opponent table');
-    for (let i = 1; i < 11; i++) {
+    //designation of enemy ships
+    /*let table = document.querySelector('#opponent table'); 
+    for (let i = 1; i < 11; i++) { 
         for (let j = 1; j < 11; j++) {
             if (arrOpp[i-1][j-1] == 2) {
                 let opponentsShip = table.rows[i].cells[j];
                 opponentsShip.classList.add('opponent-ship');
             };
         };
-    };
+    };*/
     
     return true;
 };
