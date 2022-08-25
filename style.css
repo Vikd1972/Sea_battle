@@ -226,3 +226,36 @@ body {
     border: 1px solid #20B2AA;
     border-radius: 10px;
 }
+
+.field-game__info {
+    position: fixed;
+    visibility: hidden;
+    border: 1px solid red;
+    border-radius: 20px;
+    background-color: rgba(220, 227, 200, 0.8);
+    width: 700px;
+    height: 500px;
+    margin-left: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+}
+
+.message-info {    
+    border-radius: 17px;
+    width: 640px;
+    height: 200px;
+    margin-top: 170px;
+    font-size: 72px;
+    font-family: 'Rubik Marker Hatch', cursive;
+    color: #ff5722;
+    text-align: center;
+}
+
+.message-button .reload {
+    margin-top: 25px;
+    width: 450px;
+    height: 70px;
+    font-size: 40px;
+    color: #ff5722;
+}

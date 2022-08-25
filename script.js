@@ -8,6 +8,22 @@ var hor = true; //horizontal arrangement ships
 var randomCoor = [0, 0] // random coordinates
 var opponentShips = [];
 let yourShips = [];
+let yourWin = 0;
+let oppWin = 0;
+let isWounded = false;
+let indexOpp, indexYour;
+let lastWoundedShip;
+let pathUp = true;
+let pathDown = false;
+let pathLeft = false;
+let pathRight = false;
+let finishOff = false;
+let lastX, lastY
+var ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+for (let i = 0; i < ships.length; i++) {
+    //console.log('run')
+    opponentShip(ships[i]);
+};
 
 function addTable(name) { //creating a playing field
     var table = document.createElement("table");
@@ -86,51 +102,51 @@ function cellDeinition() { //getting the coordinates of a single cell
 };
 cellDeinition();
 
+function isSunkOpp(x, y) {
+    searchShip: for (let i = 0; i < opponentShips.length; i++) { //search ship by shot
+        for (let j = 1; j < opponentShips[i].length; j++) {
+            if ((opponentShips[i][j][0] == x) && (opponentShips[i][j][1] == y)) {
+                //console.log('Ships: ' + (i + 1))
+                indexOpp = i;
+                opponentShips[i][j][2] = 1;
+                break searchShip;
+            };
+        };
+    };
+    for (let j = 1; j < opponentShips[indexOpp].length; j++) {
+        if (opponentShips[indexOpp][j][2] == 1) {
+            sunk = true;
+        } else {
+            sunk = false;
+            break;
+        };
+    };
+    return sunk;
+};
+
+function shotNotOpp() {
+    //console.log('shot not')
+    let currentShip = opponentShips[indexOpp]
+    for (let k = 1; k < currentShip.length; k++) {
+        let i = currentShip[k][0];
+        let j = currentShip[k][1];
+        //console.log(i,j)
+        if (arrOpp[i][j] == 5) {
+            if ((i > 0) && (arrOpp[i - 1][j] != 5)) arrOpp[i - 1][j] = 1;
+            if ((i < 9) && (arrOpp[i + 1][j] != 5)) arrOpp[i + 1][j] = 1;
+            if ((j > 0) && (arrOpp[i][j - 1] != 5)) arrOpp[i][j - 1] = 1;
+            if ((j < 9) && (arrOpp[i][j + 1] != 5)) arrOpp[i][j + 1] = 1;
+            if ((i > 0) && (j > 0) && (arrOpp[i - 1][j - 1] != 5)) arrOpp[i - 1][j - 1] = 1;
+            if ((i < 9) && (j > 0) && (arrOpp[i + 1][j - 1] != 5)) arrOpp[i + 1][j - 1] = 1;
+            if ((i > 0) && (j < 9) && (arrOpp[i - 1][j + 1] != 5)) arrOpp[i - 1][j + 1] = 1;
+            if ((i < 9) && (j < 9) && (arrOpp[i + 1][j + 1] != 5)) arrOpp[i + 1][j + 1] = 1;
+        };
+    };
+};
+
 function shotYour() { //shot  
     document.querySelector('#opponent table').onmousedown = (event) => {
-        let index;
-        let sunk = false;
-        function isSunk(x, y) {         
-            searchShip: for (let i = 0; i < opponentShips.length; i++) { //search ship by shot
-                for (let j = 1; j < opponentShips[i].length; j++) {
-                    if ((opponentShips[i][j][0] == x) && (opponentShips[i][j][1] == y)) {
-                        console.log('Ships: ' + (i + 1))
-                        index = i;
-                        opponentShips[i][j][2] = 1;
-                        break searchShip;
-                    };
-                };
-            };           
-            for (let j = 1; j < opponentShips[index].length; j++) {                
-                if (opponentShips[index][j][2] == 1) {
-                    sunk = true;
-                } else {
-                    sunk = false;
-                    break;
-                };
-            };               
-            return sunk;
-        };
-        function shotNot() {
-            console.log('shot not')
-            let currentShip = opponentShips[index]
-            for (let k = 1; k < currentShip.length; k++) {
-                let i = currentShip[k][0];
-                let j = currentShip[k][1];
-                console.log(i,j)
-                if (arrOpp[i][j] == 5) {
-                    if ((i > 0) && (arrOpp[i - 1][j] != 5)) arrOpp[i - 1][j] = 1;
-                    if ((i < 9) && (arrOpp[i + 1][j] != 5)) arrOpp[i + 1][j] = 1;
-                    if ((j > 0) && (arrOpp[i][j - 1] != 5)) arrOpp[i][j - 1] = 1;
-                    if ((j < 9) && (arrOpp[i][j + 1] != 5)) arrOpp[i][j + 1] = 1;
-                    if ((i > 0) && (j > 0) && (arrOpp[i - 1][j - 1] != 5)) arrOpp[i - 1][j - 1] = 1;
-                    if ((i < 9) && (j > 0) && (arrOpp[i + 1][j - 1] != 5)) arrOpp[i + 1][j - 1] = 1;
-                    if ((i > 0) && (j < 9) && (arrOpp[i - 1][j + 1] != 5)) arrOpp[i - 1][j + 1] = 1;
-                    if ((i < 9) && (j < 9) && (arrOpp[i + 1][j + 1] != 5)) arrOpp[i + 1][j + 1] = 1;
-                };
-            }
-        };
-        
+        //let index;                     
         let cell = event.target;
         if (cell.tagName.toLowerCase() != 'td') return;
         let x = cell.parentNode.rowIndex;
@@ -139,16 +155,20 @@ function shotYour() { //shot
         let elem = table.rows[x].cells[y];      
         if (arrOpp[x - 1][y - 1] != 2) { // away(1) wounded(4) sunk(5)
             arrOpp[x - 1][y - 1] = 1;
-            shotOpp();
+            if (isWounded) {
+                console.log('shot by: ' + (lastX + 1) + ', ' + (lastY+1));
+                sunkWounded(lastX, lastY);
+            } else shotOppRandom(1);
         } else {
-            if (isSunk(x - 1, y - 1)) {
-                for (let j = 1; j < opponentShips[index].length; j++) {
-                    let xX = opponentShips[index][j][0];
-                    let yY = opponentShips[index][j][1];
+            if (isSunkOpp(x - 1, y - 1)) {
+                for (let j = 1; j < opponentShips[indexOpp].length; j++) {
+                    let xX = opponentShips[indexOpp][j][0];
+                    let yY = opponentShips[indexOpp][j][1];
                     //console.log(xX, yY);
                     arrOpp[xX][yY] = 5;                    
                 }
-                shotNot();
+                yourWin += 1;
+                shotNotOpp();
             } else {
                 arrOpp[x - 1][y - 1] = 4;
             }
@@ -159,10 +179,10 @@ function shotYour() { //shot
                     elem = table.rows[i].cells[j];
                     elem.classList.add('shot-away');
                 };
-                if (arrOpp[i - 1][j - 1] == 2) {
+                /*if (arrOpp[i - 1][j - 1] == 2) {
                     elem = table.rows[i].cells[j];
                     elem.classList.add('opponent-ship');
-                };
+                };*/
                 if (arrOpp[i - 1][j - 1] == 4) {
                     elem = table.rows[i].cells[j];
                     elem.classList.add('shot-wounded');
@@ -173,74 +193,275 @@ function shotYour() { //shot
                 };
             };
         };
+        //console.log(yourWin)
+        if (yourWin == 10) winMessage('YOU HAVE WON!!!');
     };
 };
 shotYour();
 
-function shotOpp() {
-    let index;
-    function isSunkMe(x, y) {
-        console.log(x, y)
-        searchShip: for (let i = 0; i < yourShips.length; i++) { //search ship by shot
-            for (let j = 1; j < yourShips[i].length; j++) {
-                if ((yourShips[i][j][0] == x) && (yourShips[i][j][1] == y)) {
-                    console.log('My ships: ' + (i + 1))
-                    index = i;
-                    yourShips[i][j][2] = 1;
-                    break searchShip;
-                };
-            };
+function sunkWounded(x, y) {
+    if (pathUp && finishOff) {
+        while ((x < 9) && (arrYour[x + 1][y] != 1)) {
+            x += 1;
+            console.log('shot down after up: ' + (x + 1) + ', ' + (y + 1));
+            if (!shotOppCoord(x, y, 1) && (arrYour[x][y] == 4)) {
+                continue;
+            } else break;
         };
-        for (let j = 1; j < yourShips[index].length; j++) {
-            if (yourShips[index][j][2] == 1) {
-                sunk = true;
+        return;
+    };    
+    //console.log(x + 1, y + 1);
+    if (pathUp) {
+        console.log('shot: ' + (x + 1) + ', ' + (y + 1) + ', check up')
+        if ((x > 0) && (arrYour[x - 1][y] != 1)) {
+            x -= 1;
+            if (!shotOppCoord(x, y, 2) && (arrYour[x][y] == 1)) {
+                console.log(x + 1, y + 1);
+                console.log('up away, go left')
+                lastX = x + 1;
+                lastY = y;
+                pathUp = false;
+                pathLeft = true;
+                return;
             } else {
-                sunk = false;
-                break;
-            };
-        }; 
-        return sunk;
-    };
-    function shotNotMe() {
-            console.log('shot not me')
-            let currentShip = yourShips[index]
-            for (let k = 1; k < currentShip.length; k++) {
-                let i = currentShip[k][0];
-                let j = currentShip[k][1];
-                console.log(i,j)
-                if (arrYour[i][j] == 5) {
-                    if ((i > 0) && (arrYour[i - 1][j] != 5)) arrYour[i - 1][j] = 1;
-                    if ((i < 9) && (arrYour[i + 1][j] != 5)) arrYour[i + 1][j] = 1;
-                    if ((j > 0) && (arrYour[i][j - 1] != 5)) arrYour[i][j - 1] = 1;
-                    if ((j < 9) && (arrYour[i][j + 1] != 5)) arrYour[i][j + 1] = 1;
-                    if ((i > 0) && (j > 0) && (arrYour[i - 1][j - 1] != 5)) arrYour[i - 1][j - 1] = 1;
-                    if ((i < 9) && (j > 0) && (arrYour[i + 1][j - 1] != 5)) arrYour[i + 1][j - 1] = 1;
-                    if ((i > 0) && (j < 9) && (arrYour[i - 1][j + 1] != 5)) arrYour[i - 1][j + 1] = 1;
-                    if ((i < 9) && (j < 9) && (arrYour[i + 1][j + 1] != 5)) arrYour[i + 1][j + 1] = 1;
+                while ((x > 0) && (arrYour[x - 1][y] != 1)) {
+                    x -= 1;
+                    console.log('shot up: ' + (x + 1) + ', ' + (y + 1));
+                    if (!shotOppCoord(x, y, 3) && (arrYour[x][y] == 4)) {
+                        continue;
+                    } else break;
                 };
-            }
+                finishOff = true;
+                lastX = x + 1;
+                lastY = y;
+            };
+        } else {
+            console.log('up already shot or outside the field')
+            pathUp = false;
+            pathLeft = true;
+            lastX = x;
+            lastY = y;
         };
-        
+        //return;
+    };
+
+    if (pathLeft && finishOff) {
+        while ((y < 9) && (arrYour[x][y + 1] != 1)) {
+            y += 1;
+            console.log('shot right after left: ' + (x + 1) + ', ' + (y + 1));
+            if (!shotOppCoord(x, y, 4) && (arrYour[x][y] == 4)) {
+                continue;
+            } else break;
+        };
+        return;
+    };    
+    //console.log(x + 1, y + 1);
+    if (pathLeft) {
+        console.log('shot: ' + (x + 1) + ', ' + (y + 1) + ', check left')
+        if ((y > 0) && (arrYour[x][y - 1] != 1)) {
+            y -= 1;
+            if (!shotOppCoord(x, y, 5) && (arrYour[x][y] == 1)) {
+                console.log(x + 1, y + 1);
+                console.log('left away, go down')
+                lastX = x;
+                lastY = y + 1;
+                pathLeft = false;
+                pathDown = true;
+                return;
+            } else {
+                while ((y > 0) && (arrYour[x][y - 1] != 1)) {
+                    y -= 1;
+                    console.log('shot left: ' + (x+1) + ', ' + (y+1));
+                    if (!shotOppCoord(x, y, 6) && (arrYour[x][y] == 4)) {
+                        continue;
+                    } else break; 
+                };
+                finishOff = true;
+                lastX = x;
+                lastY = y + 1;
+            };       
+        } else {
+            console.log('left already shot or outside the field')
+            pathLeft = false;
+            pathDown = true;
+            lastX = x;
+            lastY = y;
+        };
+        //return;
+    };
+
+    if (pathDown && finishOff) {
+        while ((x > 0) && (arrYour[x - 1][y] != 1)) {
+            x -= 1;
+            console.log('shot up after down: ' + (x + 1) + ', ' + (y + 1));
+            if (!shotOppCoord(x, y, 7) && (arrYour[x][y] == 4)) {
+                continue;
+            } else break;
+        };
+        return;
+    };    
+    //console.log(x + 1, y + 1);
+    if (pathDown) {
+        console.log('shot: ' + (x + 1) + ', ' + (y + 1) + ', check down')
+        if ((x < 9) && (arrYour[x + 1][y] != 1)) {
+            x += 1;
+            if (!shotOppCoord(x, y, 8) && (arrYour[x][y] == 1)) {
+                console.log(x + 1, y + 1);
+                console.log('down away, go right')
+                lastX = x - 1;
+                lastY = y;
+                pathDown = false;
+                pathRight = true;
+                return;
+            } else {
+                while ((x < 9) && (arrYour[x + 1][y] != 1)) {
+                    x += 1;
+                    console.log('shot down: ' + (x+1) + ', ' + (y+1));
+                    if (!shotOppCoord(x, y, 9) && (arrYour[x][y] == 4)) {
+                        continue;
+                    } else break; 
+                };
+                finishOff = true;
+                lastX = x - 1;
+                lastY = y;
+            };       
+        } else {
+            console.log('down already shot or outside the field')
+            pathDown = false;
+            pathRight = true;
+            lastX = x;
+            lastY = y;
+        };
+        //return;
+    };
+
+    if (pathRight && finishOff) {
+        while ((y > 0) && (arrYour[x][y - 1] != 1)) {
+            y -= 1;
+            console.log('shot left after right: ' + (x + 1) + ', ' + (y + 1));
+            if (!shotOppCoord(x, y, 10) && (arrYour[x][y] == 4)) {
+                continue;
+            } else break;
+        };
+        return;
+    };    
+    //console.log(x + 1, y + 1);
+    if (pathRight) {
+        console.log('shot: ' + (x + 1) + ', ' + (y + 1) + ', check right')
+        if ((y < 9) && (arrYour[x][y + 1] != 1)) {
+            y += 1;
+            if (!shotOppCoord(x, y, 11) && (arrYour[x][y] == 1)) {
+                console.log(x + 1, y + 1);
+                console.log('right away, go up')
+                lastX = x;
+                lastY = y - 1;
+                pathRight = false;
+                pathUp = true;
+                return;
+            } else {
+                while ((y < 9) && (arrYour[x][y + 1] != 1)) {
+                    y += 1;
+                    console.log('shot rigth: ' + (x+1) + ', ' + (y+1));
+                    if (!shotOppCoord(x, y, 12) && (arrYour[x][y] == 4)) {
+                        continue;
+                    } else break; 
+                };
+                finishOff = true;
+                lastX = x;
+                lastY = y - 1;
+            };       
+        } else {
+            console.log('right already shot or outside the field')
+            pathRight = false;
+            pathUp = true;
+            lastX = x;
+            lastY = y;
+        } ;
+        //return;
+    };
+//return;
+};
+
+function isSunkMe(x, y) {
+    //console.log(x, y)
+    searchShip: for (let i = 0; i < yourShips.length; i++) { //search ship by shot
+        for (let j = 1; j < yourShips[i].length; j++) {
+            if ((yourShips[i][j][0] == x) && (yourShips[i][j][1] == y)) {
+                //console.log('My ships: ' + (i + 1))
+                indexYour = i;
+                yourShips[i][j][2] = 1;
+                break searchShip;
+            };
+        };
+    };
+    for (let j = 1; j < yourShips[indexYour].length; j++) {
+        if (yourShips[indexYour][j][2] == 1) {
+            sunk = true;
+        } else {
+            sunk = false;
+            break;
+        };
+    };
+    return sunk;
+};
+
+function shotNotMe() {
+    //console.log('shot not me')
+    let currentShip = yourShips[indexYour]
+    for (let k = 1; k < currentShip.length; k++) {
+        let i = currentShip[k][0];
+        let j = currentShip[k][1];
+        //console.log(i, j)
+        if (arrYour[i][j] == 5) {
+            if ((i > 0) && (arrYour[i - 1][j] != 5)) arrYour[i - 1][j] = 1;
+            if ((i < 9) && (arrYour[i + 1][j] != 5)) arrYour[i + 1][j] = 1;
+            if ((j > 0) && (arrYour[i][j - 1] != 5)) arrYour[i][j - 1] = 1;
+            if ((j < 9) && (arrYour[i][j + 1] != 5)) arrYour[i][j + 1] = 1;
+            if ((i > 0) && (j > 0) && (arrYour[i - 1][j - 1] != 5)) arrYour[i - 1][j - 1] = 1;
+            if ((i < 9) && (j > 0) && (arrYour[i + 1][j - 1] != 5)) arrYour[i + 1][j - 1] = 1;
+            if ((i > 0) && (j < 9) && (arrYour[i - 1][j + 1] != 5)) arrYour[i - 1][j + 1] = 1;
+            if ((i < 9) && (j < 9) && (arrYour[i + 1][j + 1] != 5)) arrYour[i + 1][j + 1] = 1;
+        };
+    }
+};
+
+function shotOppRandom(n) {
     randomCoordinates();
     let x = randomCoor[0];
     let y = randomCoor[1];
-    if ((arrYour[x][y] == 1) || (arrYour[x][y] == 1) || (arrYour[x][y] == 1)) shotOpp();
+    //console.log(x+1, y+1)
+    if ((arrYour[x][y] == 1) || (arrYour[x][y] == 4) || (arrYour[x][y] == 5)) {
+        console.log('occupied');
+        shotOppRandom(3);
+    };
     let table = document.querySelectorAll('#your table')[0];
-    let elem = table.rows[x + 1].cells[y + 1];      
+    let elem = table.rows[x + 1].cells[y + 1];     
+    //console.log('shot random')
+    //console.log(x+1,y+1)
     if (arrYour[x][y] != 2) { // away(1) wounded(4) sunk(5)
         arrYour[x][y] = 1;
+        console.log('shot random away: ' + (x + 1) + ', ' + (y + 1) + ', where from: ' + n);
     } else {
         if (isSunkMe(x, y)) {
-            console.log('Sunk me!!!!')
-            for (let j = 1; j < yourShips[index].length; j++) {
-                let xX = yourShips[index][j][0];
-                let yY = yourShips[index][j][1];
+            console.log('Sunk me!!!! ' + (x + 1) + ', ' + (y + 1))
+            for (let j = 1; j < yourShips[indexYour].length; j++) {
+                let xX = yourShips[indexYour][j][0];
+                let yY = yourShips[indexYour][j][1];
                 //console.log(xX, yY);
                 arrYour[xX][yY] = 5;
+                isWounded = false;
+                finishOff = false;
+                shotOppRandom(4);
             }
+            oppWin += 1;
             shotNotMe();
         } else {
+            console.log('Wounded me: ' + (x + 1) + ', ' + (y + 1))
             arrYour[x][y] = 4;
+            isWounded = true;
+            finishOff = false;
+            lastWoundedShip = indexYour;
+            sunkWounded(x, y);
         }
     };
     for (let i = 0; i < 10; i++) {
@@ -257,18 +478,59 @@ function shotOpp() {
                 elem = table.rows[i + 1].cells[j + 1];
                 elem.classList.add('shot-sunk');
             };
-        };
+        };        
+    } if (oppWin == 10) winMessage('COMPUTER WON!!!');;
+};
+
+function shotOppCoord(x, y, n) {
+    let table = document.querySelectorAll('#your table')[0];
+    let elem = table.rows[x + 1].cells[y + 1];      
+    if ((arrYour[x][y] == 0) || (arrYour[x][y] == 3)) { 
+        arrYour[x][y] = 1;
+        console.log('shot accurately away: ' + (x + 1) + ', ' + (y + 1) + ', where from: ' + n)
+        fieldRendering()
+        return false;
+    } else {
+        if (isSunkMe(x, y)) {
+            console.log('Sunk me!!!! ' + (x + 1) + ', ' + (y + 1))
+            //console.log('Sunk me!!!!')
+            for (let j = 1; j < yourShips[indexYour].length; j++) {
+                let xX = yourShips[indexYour][j][0];
+                let yY = yourShips[indexYour][j][1];  
+                isWounded = false;
+                finishOff = false;
+                arrYour[xX][yY] = 5;
+                //shotOppRandom(5);
+            }
+            oppWin += 1;
+            shotNotMe();
+            fieldRendering()
+        } else {
+            console.log('Wounded me: ' + (x + 1) + ', ' + (y + 1))
+            arrYour[x][y] = 4; 
+            fieldRendering()
+            return false;
+        }
     };
-
-  /*  
-    arrYour[x][y] = 1;
-    let table = document.querySelector('#your table');
-    let elemShip = table.rows[x + 1].cells[y + 1];
-    elemShip.classList.add('shot-away');   
-    isSunkMe(x, y)*/
-
-
-}
+    function fieldRendering() {
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                if (arrYour[i][j] == 1) {
+                    elem = table.rows[i + 1].cells[j + 1];
+                    elem.classList.add('shot-away');
+                };
+                if (arrYour[i][j] == 4) {
+                    elem = table.rows[i + 1].cells[j + 1];
+                    elem.classList.add('shot-wounded');
+                };
+                if (arrYour[i][j] == 5) {
+                    elem = table.rows[i + 1].cells[j + 1];
+                    elem.classList.add('shot-sunk');
+                };
+            };
+        };        
+    } if (oppWin == 10) winMessage('COMPUTER WON!!!');
+};
 
 function shipMove() { //moving ships
     let x, xX, y, yY, shipLength;
@@ -604,13 +866,8 @@ function opponentShip(shipLength) {//placement of opponent's ships
     return true;
 };
 
-var ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-for (let i = 0; i < ships.length; i++) {
-    //console.log('run')
-    opponentShip(ships[i]);
-};
-
-function autoPlacement(shipLength) {//placement of opponent's ships    
+function autoPlacement(shipLength) {//placement of your ships    
+    if (yourShips.length == 10) return false;
     let myShipOn = true;
     yourShips.push(shipLength);
 
@@ -625,7 +882,6 @@ function autoPlacement(shipLength) {//placement of opponent's ships
         let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
 
         if ((horOpp) && (verOpp)) {
-            //console.log(horOpp + ' ' + verOpp + ' right');
             if (y + shipLength - 1 <= 9) {
                 //console.log('fit');
                 for (let i = 0; i < shipLength; i++) {
@@ -642,8 +898,7 @@ function autoPlacement(shipLength) {//placement of opponent's ships
                     for (let i = 0; i < shipLength; i++) {
                         arrYour[x][y + i] = 2;                
                         yourShips[yourShips.length-1].push([x, (y + i), 0]);
-                    };
-                    //console.log('done');               
+                    };          
                 };
                 
             };
@@ -667,7 +922,6 @@ function autoPlacement(shipLength) {//placement of opponent's ships
                         arrYour[x][y - i] = 2;         
                         yourShips[yourShips.length-1].push([x, (y - i), 0]);
                     };
-                    //console.log('done');
                 };
             };
         };
@@ -690,7 +944,6 @@ function autoPlacement(shipLength) {//placement of opponent's ships
                         arrYour[x + i][y] = 2;
                         yourShips[yourShips.length-1].push([(x + i), y, 0]);
                     };
-                    //console.log('done'); 
                 };
             };
         };
@@ -713,7 +966,6 @@ function autoPlacement(shipLength) {//placement of opponent's ships
                         arrYour[x - i][y] = 2;
                         yourShips[yourShips.length-1].push([(x - i), y, 0]);
                     };
-                    //console.log('done');
                 };
             };
         };
@@ -747,7 +999,7 @@ function autoPlacement(shipLength) {//placement of opponent's ships
     return true;
 };
 
-function startAuto() {
+function startAuto() { //start auto-placement of your ships
     for (let i = 0; i < 10; i++) {
         let ship = document.querySelectorAll('.ships')[i];
         let shipLength = ship.className[ship.className.length - 1];
@@ -755,3 +1007,16 @@ function startAuto() {
         ship.hidden = true
     };
 }
+
+function winMessage(info) {
+    let messageWin = document.querySelector('.field-game__info');
+    let message = document.querySelector('.message-info');
+    message.innerHTML = info;
+    messageWin.style.visibility='visible';
+}
+
+function restartGame() {
+    let messageWin = document.querySelector('.field-game__info');
+    messageWin.style.visibility = 'hidden';
+    location.reload();
+};
