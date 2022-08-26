@@ -223,6 +223,7 @@ body {
     text-align: center;
     margin-top: 50px;
     display: flex;
+    color: #b1420e;
         flex-direction: column;
         align-items: center;
 }
@@ -231,6 +232,7 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: 50px;
+    color: #20B2AA;
 }
 
 .rules__colors-text {

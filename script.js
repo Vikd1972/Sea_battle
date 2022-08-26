@@ -271,7 +271,7 @@ function shipMove() { //manual placement of ships
                 };
                 xX = x;
                 yY = y;
-            };        
+            };     
 
         };
         currentTable = table; 
@@ -284,14 +284,17 @@ function shipMove() { //manual placement of ships
             } else {
                 if (x > (11 - shipLength)) x = (11 - shipLength);
             };   
-            if (fixingShip(x, y, shipLength)) shipRotate.hidden = true;
-            shipRotate.onmouseup = null;
-            hor = true;
+            if (fixingShip(x, y, shipLength)) {
+                shipRotate.hidden = true;
+                hor = true;
+            };
+            shipRotate.onmouseup = null;           
         };
     });   
+
     document.addEventListener("keydown", function (event) {
-            if (event.code == 'Space') rotateShip(shipRotate, currentTable, shipLength);
-        }); 
+        if (event.code == 'Space') rotateShip(shipRotate, currentTable, shipLength);
+    }); 
 };
 shipMove();
 
@@ -902,7 +905,7 @@ function shotOppRandom(n) { //random shot of an opponent
     if (oppWin == 10) winMessage('COMPUTER WON!!!');;
 };
 
-function shotOppCoord(x, y, n) { //opponent's shot at the coordinates
+function shotOppCoord(x, y, n) { //opponent's shot at the coordinates    
     let table = document.querySelectorAll('#your table')[0];
     let elem = table.rows[x + 1].cells[y + 1];
     if ((arrYour[x][y] == 0) || (arrYour[x][y] == 3)) {
