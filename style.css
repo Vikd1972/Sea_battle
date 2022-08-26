@@ -24,8 +24,7 @@ body {
     flex-direction: row;
     width: auto;
     height: auto;
-    justify-content: center;
-    margin-right: 200px;
+    justify-content: center;    
     margin-top: 100px;
 }
 
@@ -182,44 +181,70 @@ body {
 }
 
 .game__status {
+    width: 200px;
     font-size: 36px;
     color: #20B2AA;
     text-align: center;
-    margin-top: 50px;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .game__status-buttons {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;    
 }
 
 .reload {
     font-family: 'Rubik Marker Hatch', cursive;
     width: 150px;
-    height: 80px;
+    height: 100px;
     font-size: 24px;
     color: #20B2AA;
     background-color: #dcdcdc;
-    border: 1px solid #20B2AA;
+    border: 3px solid #20B2AA;
     border-radius: 10px;
-    margin: 0 20px;
+    margin: 10px 20px;
 }
 
 .reload:hover {
     background-color: #acacac;    
 }
 
+.rules {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .rules__text {
-    font-size: 24px;
+    font-size: 30px;
     color: #20B2AA;
     text-align: center;
-    margin-top: 100px;
+    margin-top: 50px;
+    display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+.rules__color {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+}
+
+.rules__colors-text {
+    font-size: 30px;
+    width: 480px;
+}
+
+.rules__colors-color {
+    display: flex;
+    flex-direction: row;
 }
 
 .rules__shot {
+    font-size: 24px;
     width: 150px;
     height: 30px;
     margin: 5px;
@@ -233,9 +258,12 @@ body {
     border: 1px solid red;
     border-radius: 20px;
     background-color: rgba(220, 227, 200, 0.8);
-    width: 700px;
+    width: 900px;
     height: 500px;
-    margin-left: 200px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;    
@@ -245,15 +273,15 @@ body {
     border-radius: 17px;
     width: 640px;
     height: 200px;
-    margin-top: 170px;
-    font-size: 72px;
+    margin-top: 130px;
+    font-size: 96px;
     font-family: 'Rubik Marker Hatch', cursive;
     color: #ff5722;
     text-align: center;
 }
 
 .message-button .reload {
-    margin-top: 25px;
+    margin-top: 50px;
     width: 450px;
     height: 70px;
     font-size: 40px;

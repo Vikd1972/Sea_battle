@@ -49,17 +49,25 @@
                         Opponent's field
                         <div id="opponent"></div>
                     </div>
-                </div>
-                <div class="game__status">
-                    <div>Status</div>
-                    <div class="game__status-buttons">
-                    <button class="reload" href="#" onclick="location.reload(); return false;">
-                        start over
-                    </button>
-                    <button class="reload" href="#" onclick="startAuto();">
-                        automatic placement
-                    </button>
+                </div>                
+            </div>
+
+            <div class="game__status">
+                <div>Start game</div>
+                <div class="game__status-buttons">
+                    <div>
+                        <button class="reload" href="#" onclick="startAutoPlacement();">
+                            automatic placement my ships
+                        </button>
                     </div>
+                    <div>
+                        <button class="reload" href="#" onclick="location.reload(); return false;">
+                            start over
+                        </button>
+                    </div>
+                </div>
+                    
+                    
                 </div>
             </div>
 
@@ -76,10 +84,16 @@
 
     <footer class="rules">
         <div class="rules__text">Rules:
-            <div>* turning the ship by pressing the space bar</div>
-            <div class="rules__shot shot-away">- Away</div>
-            <div class="rules__shot shot-wounded">- Wounded</div>
-            <div class="rules__shot shot-sunk">- Sunk</div>
+            <div>1. before starting the game, arrange your ships</div>
+            <div>2. the ship is rotated by pressing the space bar</div>
+            <div class="rules__color">
+                <div class="rules__colors-text">Color designation of the shot:</div>
+                <div class="rules__colors-color">
+                    <div class="rules__shot shot-away">- Away</div>
+                    <div class="rules__shot shot-wounded">- Wounded</div>
+                    <div class="rules__shot shot-sunk">- Sunk</div>
+                </div>
+            </div>
         </div>
     </footer>
 
