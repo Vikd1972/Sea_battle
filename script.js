@@ -8,6 +8,8 @@ var hor = true; //horizontal arrangement ships
 var randomCoor = [0, 0] // random coordinates
 var opponentShips = [];
 let yourShips = [];
+var shipRotate;
+var currentTable;
 let yourWin = 0;
 let oppWin = 0;
 let isWounded = false;
@@ -205,34 +207,34 @@ function shipMove() { //manual placement of ships
     
     document.addEventListener('mousedown', function(event) { 
         event.preventDefault();
-        let ship = event.target.closest('.ships')
-        if (!ship) return;
-        ship.ondragstart = function () {
+        shipRotate = event.target.closest('.ships')
+        if (!shipRotate) return;
+        shipRotate.ondragstart = function () {
             return false;
         };
-        if (ship.className.includes(4)) shipLength = 4;
-        if (ship.className.includes(3)) shipLength = 3;
-        if (ship.className.includes(2)) shipLength = 2;
-        if (ship.className.includes(1)) shipLength = 1;
+        if (shipRotate.className.includes(4)) shipLength = 4;
+        if (shipRotate.className.includes(3)) shipLength = 3;
+        if (shipRotate.className.includes(2)) shipLength = 2;
+        if (shipRotate.className.includes(1)) shipLength = 1;
 
-        ship.classList.add('moving-ship')
-        document.body.append(ship);
+        shipRotate.classList.add('moving-ship')
+        document.body.append(shipRotate);
 
         moveAt(event.pageX, event.pageY);
 
         function moveAt(pageX, pageY) {
-            ship.style.left = pageX - 17 + 'px';
-            ship.style.top = pageY - 17 + 'px';
+            shipRotate.style.left = pageX - 17 + 'px';
+            shipRotate.style.top = pageY - 17 + 'px';
         };
 
         let table = document.querySelector('#your table');
         function onMouseMove(event) {
             moveAt(event.pageX, event.pageY);
-            ship.hidden = true;
+            shipRotate.hidden = true;
             let elemCell = document.elementFromPoint(event.clientX, event.clientY);  
             x = elemCell.parentNode.rowIndex;
             y = elemCell.cellIndex;          
-            ship.hidden = false;
+            shipRotate.hidden = false;
 
             if (!elemCell) return;           
             
@@ -272,24 +274,24 @@ function shipMove() { //manual placement of ships
             };        
 
         };
-        document.addEventListener("keydown", function (event) {
-            if (event.code == 'Space')  rotateShip(ship, table, shipLength);
-        }); 
-
+        currentTable = table; 
+        
         document.addEventListener('mousemove', onMouseMove);
-        ship.onmouseup = function () {
+        shipRotate.onmouseup = function () {
             document.removeEventListener('mousemove', onMouseMove);            
             if (hor) {
                 if (y > (11 - shipLength)) y = (11 - shipLength);
             } else {
                 if (x > (11 - shipLength)) x = (11 - shipLength);
             };   
-            if (fixingShip(x, y, shipLength)) ship.hidden = true;
-            ship.onmouseup = null;
+            if (fixingShip(x, y, shipLength)) shipRotate.hidden = true;
+            shipRotate.onmouseup = null;
             hor = true;
-            
         };
     });   
+    document.addEventListener("keydown", function (event) {
+            if (event.code == 'Space') rotateShip(shipRotate, currentTable, shipLength);
+        }); 
 };
 shipMove();
 
@@ -366,7 +368,7 @@ function fixingShip(x, y, shipLength) { //drawing of installed ships
 
 function rotateShip(ship, table, shipLength) { //ship rotation
     let name = shipLength == 4 ? 'ships__4-ver' : shipLength == 3 ? 'ships__3-ver' : shipLength == 2 ? 'ships__2-ver' : 'ships__1'; 
-    console.log('name ship: ' + name + ', ' + hor)
+    //console.log('name ship: ' + name + ', ' + hor)
     if (hor) {
         ship.classList.add(name);
         hor = false;
