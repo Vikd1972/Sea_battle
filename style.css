@@ -156,9 +156,23 @@ body {
     background-color: #dcdcdc;
 }
 
+@keyframes shots {
+    0% {
+        background-color: #dcdcdc
+    }
+
+    50% {
+        background-color: #20B2AA
+    }
+
+    100% {
+        background-color: #e0f2f1
+    }
+}
+
 .shot-away {
     background-color: #e0f2f1;   
-    transition: background-color 0.5s;
+    animation: shots 1s;    
 }
 
 .shot-wounded {
