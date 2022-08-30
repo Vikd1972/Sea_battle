@@ -88,82 +88,43 @@ function autoPlacement(shipLength, ships, arrField) {//automatic placement of sh
     let horOpp = (Math.floor(Math.random() * 10) % 2 == 0);
     let verOpp = (Math.floor(Math.random() * 10) % 2 == 0);
 
-    if ((horOpp) && (verOpp)) {
-      if (y + shipLength - 1 <= 9) {
-        for (let i = 0; i < shipLength; i++) {
-          if (arrField[x][y + i] != 0) {
-            occupied = true;
-            break;
-          };
-        };
-        if (!occupied) {
-          shipOn = false;
-          ships[ships.length - 1] = [];
-          ships[ships.length - 1][0] = +shipLength;
-          for (let i = 0; i < shipLength; i++) {
-            arrField[x][y + i] = 2;
-            ships[ships.length - 1].push([x, (y + i), 0]);
-          };
-        };
-      };
-    };
 
-    if ((horOpp) && (!verOpp)) {
-      if (y - shipLength + 1 >= 0) {
-        for (let i = 0; i < shipLength; i++) {
-          if (arrField[x][y - i] != 0) {
-            occupied = true;
-            break;
-          };
-        };
-        if (!occupied) {
-          shipOn = false;
-          ships[ships.length - 1] = [];
-          ships[ships.length - 1][0] = +shipLength;
-          for (let i = 0; i < shipLength; i++) {
-            arrField[x][y - i] = 2;
-            ships[ships.length - 1].push([x, (y - i), 0]);
-          };
-        };
-      };
+    for (let i = 0; i < shipLength; i++) {
+      if (((horOpp) && (verOpp)) && (y + shipLength - 1 <= 9) && (arrField[x][y + i] != 0)) occupied = true;
+      if (((horOpp) && (!verOpp)) && (y - shipLength + 1 >= 0) && (arrField[x][y - i] != 0)) occupied = true;
+      if (((!horOpp) && (verOpp)) && (x + shipLength - 1 <= 9) && (arrField[x + i][y] != 0)) occupied = true;
+      if (((!horOpp) && (!verOpp)) && (x - shipLength + 1 >= 0) && (arrField[x - i][y] != 0)) occupied = true;
     };
+    console.log('horOpp: ' + horOpp + ', verOpp: ' + verOpp + ', occupied: ' + occupied)
 
-    if ((!horOpp) && (verOpp)) {
-      if (x + shipLength - 1 <= 9) {
-        for (let i = 0; i < shipLength; i++) {
-          if (arrField[x + i][y] != 0) {
-            occupied = true;
-            break;
-          };
-        };
-        if (!occupied) {
+    if (!occupied) {
+      console.log('do it: ' + shipLength + ', x: ' + x + ', y: ' + y)
+      ships[ships.length - 1] = [];
+      ships[ships.length - 1][0] = +shipLength;
+      for (let i = 0; i < shipLength; i++) {
+        if (((horOpp) && (verOpp)) && (y + shipLength - 1 <= 9)) {
+          arrField[x][y + i] = 2;
+          ships[ships.length - 1].push([x, (y + i), 0]);
+          console.log('ok: ' + shipLength)
           shipOn = false;
-          ships[ships.length - 1] = [];
-          ships[ships.length - 1][0] = +shipLength;
-          for (let i = 0; i < shipLength; i++) {
-            arrField[x + i][y] = 2;
-            ships[ships.length - 1].push([(x + i), y, 0]);
-          };
         };
-      };
-    };
-
-    if ((!horOpp) && (!verOpp)) {
-      if (x - shipLength + 1 >= 0) {
-        for (let i = 0; i < shipLength; i++) {
-          if (arrField[x - i][y] != 0) {
-            occupied = true;
-            break;
-          };
-        };
-        if (!occupied) {
+        if (((horOpp) && (!verOpp)) && (y - shipLength + 1 >= 0)) {
+          arrField[x][y - i] = 2;
+          ships[ships.length - 1].push([x, (y - i), 0]);
+          console.log('ok: ' + shipLength)
           shipOn = false;
-          ships[ships.length - 1] = [];
-          ships[ships.length - 1][0] = +shipLength;
-          for (let i = 0; i < shipLength; i++) {
-            arrField[x - i][y] = 2;
-            ships[ships.length - 1].push([(x - i), y, 0]);
-          };
+        };
+        if (((!horOpp) && (verOpp)) && (x + shipLength - 1 <= 9)) {
+          arrField[x + i][y] = 2;
+          ships[ships.length - 1].push([(x + i), y, 0]);
+          console.log('ok: ' + shipLength)
+          shipOn = false;
+        };
+        if (((!horOpp) && (!verOpp)) && (x - shipLength + 1 >= 0)) {
+          arrField[x - i][y] = 2;
+          ships[ships.length - 1].push([(x - i), y, 0]);
+          console.log('ok: ' + shipLength)
+          shipOn = false;
         };
       };
     };
@@ -454,6 +415,13 @@ function fieldRendering(name, arr) { //rendering fields
         elem = table.rows[i + 1].cells[j + 1];
         elem.classList.add('shot-away');
       };
+
+      if (arr[i][j] == 2) {
+        elem = table.rows[i + 1].cells[j + 1];
+        elem.classList.add('elem-ship');
+      };
+
+
       if (arr[i][j] == 4) {
         elem = table.rows[i + 1].cells[j + 1];
         elem.classList.add('shot-wounded');
@@ -840,6 +808,3 @@ function shotOppCoord(x, y, n) { //opponent's shot at the coordinates
   };
   if (oppWin == 10) winMessage('COMPUTER WON!!!');
 };
-
-
-
